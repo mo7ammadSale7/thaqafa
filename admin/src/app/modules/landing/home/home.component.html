@@ -1,0 +1,39 @@
+<div class="flex flex-col items-center justify-center w-full h-full">
+    <div class="w-full max-w-3xl">
+        <div class="max-w-none mx-auto prose prose-sm">
+            <img
+                class="w-20"
+                src="assets/images/logo/logo.svg"
+                alt="Logo image"
+            />
+            <h1>وحدة صفحة الهبوط</h1>
+            <p>
+                هذه يمكن أن تكون صفحة الهبوط أو صفحة الترحيب لتطبيقك. إذا كنت
+                تستخدم SSR, أو إذا لم تكن بحاجة إلى رؤية محرك البحث والتحسينات,
+                يمكنك حتى استخدام هذه الصفحة كصفحتك الرئيسية المقصودة.
+            </p>
+            <p>
+                This is a separate "module", it has its own directory and
+                routing setup and also it's completely separated from the actual
+                application. This is also a simple example of a multiple
+                applications setup that uses the same codebase. You can have
+                different entry points and essentially have different
+                applications within the same codebase.
+            </p>
+        </div>
+        <div>
+            <a
+                class="mt-8"
+                mat-flat-button
+                [color]="'primary'"
+                [routerLink]="'/example'"
+            >
+                <span>شغل التطبيق</span>
+                <mat-icon
+                    class="mr-2 icon-size-5"
+                    [svgIcon]="'heroicons_solid:arrow-narrow-left'"
+                ></mat-icon>
+            </a>
+        </div>
+    </div>
+</div>

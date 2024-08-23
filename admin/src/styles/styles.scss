@@ -1,0 +1,17 @@
+/* ----------------------------------------------------------------------------------------------------- */
+/*  @ Import/write your custom styles here.
+/*  @ Styles from this file will override 'vendors.scss' and Fuse's base styles.
+/* ----------------------------------------------------------------------------------------------------- */
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900;1000&display=swap");
+* {
+    font-family: "Cairo", sans-serif;
+}
+
+body {
+    direction: rtl;
+}
+
+.fuse-vertical-navigation-item-title-wrapper,
+.fuse-horizontal-navigation-item-title-wrapper {
+    margin-right: 5px;
+}

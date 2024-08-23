@@ -1,0 +1,221 @@
+<div class="flex flex-col flex-auto min-w-0">
+  <!-- Header -->
+  <div
+    class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent"
+  >
+    <!-- Loader -->
+    <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+      <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+    </div>
+    <div class="flex-1 min-w-0">
+      <!-- Breadcrumbs -->
+      <div class="flex flex-wrap items-center font-medium">
+        <a class="whitespace-nowrap text-primary-500">طلاب مسابقة الثقافة الإسلامية</a>
+      </div>
+      <!-- Title -->
+      <div class="mt-2">
+        <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+          {{ studentId ? 'تعديل بيانات الطالب' : 'إضافة بيانات طالب' }}
+        </h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex-auto p-6 sm:p-10">
+    <!-- blog form -->
+    <form [formGroup]="studentForm">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full -m-4">
+        <div class="lg:col-span-2 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl">
+          <div class="my-8">
+            <div class="flex">
+              <div class="flex flex-col w-full">
+                <div class="flex flex-col sm:flex-row">
+                  <div class="flex flex-col flex-auto w-full">
+                    <div class="flex flex-col sm:flex-row flex-auto w-full">
+                      <!-- nationalID -->
+                      <mat-form-field class="w-full ml-2">
+                        <mat-label>الرقم القومي</mat-label>
+                        <input matInput [formControlName]="'nationalID'" />
+                        <mat-error *ngIf="studentForm.get('nationalID').hasError('minlength')">
+                          الرقم القومي لا يقل عن 14 رقم
+                        </mat-error>
+                        <mat-error *ngIf="studentForm.get('nationalID').hasError('maxlength')">
+                          الرقم القومي لا يزيد عن 14 رقم
+                        </mat-error>
+                        <mat-error *ngIf="studentForm.get('nationalID').hasError('required')">
+                          من فضلك أدخل الرقم القومي
+                        </mat-error>
+                        <mat-error *ngIf="studentForm.get('nationalID').hasError('duplicate')">
+                          هذا الرقم موجود مسبقا
+                        </mat-error>
+                      </mat-form-field>
+
+                      <!-- dateOfBirth -->
+                      <mat-form-field class="w-full ml-2">
+                        <mat-label>تاريخ الميلاد</mat-label>
+                        <input matInput [matDatepicker]="picker" [formControlName]="'dateOfBirth'" />
+                        <mat-hint>سنة/شهر/يوم</mat-hint>
+                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                        <mat-error *ngIf="studentForm.get('dateOfBirth').hasError('required')">
+                          من فضلك أدخل تاريخ الميلاد
+                        </mat-error>
+                      </mat-form-field>
+
+                      <!-- Gender -->
+                      <mat-form-field class="w-full">
+                        <mat-label class="ml-auto">النوع</mat-label>
+                        <mat-select [formControlName]="'gender'">
+                          <mat-option aria-disabled="true">اختر النوع</mat-option>
+                          <mat-option [value]="'male'">ذكر</mat-option>
+                          <mat-option [value]="'female'">أنثى</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="studentForm.get('gender').hasError('required')">
+                          من فضلك أدخل النوع
+                        </mat-error>
+                      </mat-form-field>
+                    </div>
+
+                    <!-- Name -->
+                    <mat-form-field class="w-full">
+                      <mat-label>الاسم</mat-label>
+                      <input matInput [formControlName]="'name'" />
+                      <mat-error *ngIf="studentForm.get('name').hasError('required')"> من فضلك أدخل الاسم </mat-error>
+                    </mat-form-field>
+
+                    <div class="flex flex-col sm:flex-row flex-auto w-full">
+                      <!-- address -->
+                      <mat-form-field class="w-full ml-2">
+                        <mat-label>العنوان</mat-label>
+                        <input matInput [formControlName]="'address'" />
+                        <mat-error *ngIf="studentForm.get('address').hasError('required')">
+                          من فضلك أدخل العنوان
+                        </mat-error>
+                      </mat-form-field>
+
+                      <!-- phoneNumber -->
+                      <mat-form-field class="w-full">
+                        <mat-label>رقم الهاتف</mat-label>
+                        <input matInput [formControlName]="'phoneNumber'" />
+                        <mat-error *ngIf="studentForm.get('phoneNumber').hasError('required')">
+                          من فضلك أدخل رقم الهاتف
+                        </mat-error>
+                      </mat-form-field>
+                    </div>
+
+                    <div [formArrayName]="'subscriptions'">
+                      <div
+                        class="w-full border rounded bg-gray-50 dark:bg-gray-900 dark:bg-opacity-9 p-4 mb-4"
+                        *ngFor="let subscription of subscriptions.controls; let subscriptionIndex = index"
+                        #subscriptionsView
+                      >
+                        <div [formGroupName]="subscriptionIndex">
+                          <div class="flex flex-col items-center sm:flex-row flex-auto">
+                            <!-- year -->
+                            <mat-form-field class="w-full ml-2">
+                              <mat-label class="ml-auto">العام</mat-label>
+                              <mat-select
+                                [formControlName]="'year'"
+                                (selectionChange)="onYearChange($event.value, subscriptionIndex)"
+                              >
+                                <mat-option *ngFor="let year of years" [value]="year">{{ year }}</mat-option>
+                              </mat-select>
+                            </mat-form-field>
+
+                            <!-- level -->
+                            <mat-form-field
+                              class="w-full ml-2"
+                              *ngIf="filteredLevels?.length || subscription.get('level').value"
+                            >
+                              <mat-label class="ml-auto">المستوى</mat-label>
+                              <mat-select [formControlName]="'level'">
+                                <mat-option
+                                  *ngFor="let level of filteredLevels[subscriptionIndex]"
+                                  [value]="level.id"
+                                  >{{ level.name }}</mat-option
+                                >
+                              </mat-select>
+                            </mat-form-field>
+
+                            <!-- score -->
+                            <mat-form-field
+                              class="w-full"
+                              *ngIf="filteredLevels?.length || subscription.get('score').value"
+                            >
+                              <mat-label>النتيجة</mat-label>
+                              <input matInput [formControlName]="'score'" />
+                            </mat-form-field>
+                            <button
+                              mat-icon-button
+                              class="mr-2"
+                              *ngIf="subscriptionIndex > 0"
+                              (click)="onDeleteSubscription(subscriptionsView, subscriptionIndex)"
+                            >
+                              <mat-icon
+                                class="icon-size-5 text-warn-400"
+                                [svgIcon]="'heroicons_solid:trash'"
+                              ></mat-icon>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <button mat-flat-button [color]="'accent'" (click)="onAddSubscription()">
+                          <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                          <span class="mr-2 ml-1">إضافة</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col flex-auto p-6 bg-card rounded-2xl shadow">
+          <div class="my-8">
+            <!-- note -->
+            <div class="flex flex-col w-full">
+              <mat-form-field class="w-full">
+                <mat-label>ملاحظات</mat-label>
+                <textarea matInput [formControlName]="'note'"></textarea>
+              </mat-form-field>
+            </div>
+
+            <div class="flex flex-col my-8">
+              <span class="font-semibold mb-2">هل استلم الكتاب؟</span>
+              <mat-slide-toggle [formControlName]="'isReceived'" [color]="'primary'">
+                {{ studentForm.get('isReceived').value === true ? 'تم التسليم' : 'لم يتم التسليم' }}
+              </mat-slide-toggle>
+            </div>
+
+            <div class="flex flex-col my-8">
+              <span class="font-semibold mb-2">حالة الطالب</span>
+              <mat-slide-toggle [formControlName]="'status'" [color]="'primary'">
+                {{ studentForm.get('status').value === true ? 'تمت مراجعته' : 'لم يتم مراجعته' }}
+              </mat-slide-toggle>
+            </div>
+            <div *ngIf="student" class="w-full border-t py-4">
+              <div class="mb-4">
+                <h3 class="text-lg font-medium text-primary-500 mb-1">أضيف بواسطة:</h3>
+                <p>{{ '(' + student?.createdBy?.name + ') ' + student?.createdBy?.email }}</p>
+                <p>{{ student?.createdAt | date : 'yyyy-MM-dd - hh:mm:ss' }}</p>
+              </div>
+              <div>
+                <h3 class="text-lg font-medium text-primary-500 mb-1">أخر تحديث بواسطة:</h3>
+                <p>{{ '(' + student?.updatedBy?.name + ') ' + student?.updatedBy?.email }}</p>
+                <p>{{ student?.updatedAt | date : 'yyyy-MM-dd - hh:mm:ss' }}</p>
+              </div>
+            </div>
+            <div class="flex items-center justify-between w-full border-t px-8 py-4">
+              <button class="-mr-4" mat-button [color]="'warn'" (click)="onBack()">إلغاء</button>
+              <div class="flex items-center">
+                <button mat-flat-button [color]="'primary'" (click)="submitForm()">حفظ</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

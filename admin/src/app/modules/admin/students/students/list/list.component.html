@@ -1,0 +1,202 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+    <!-- Header -->
+    <div
+        class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
+        <!-- Loader -->
+        <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+        <!-- Title -->
+        <div class="text-4xl font-extrabold tracking-tight">قائمة الطلاب</div>
+        <!-- Actions -->
+        <div class="flex items-center flex-col sm:flex-row mt-6 sm:mt-0">
+
+            <!-- searchSelectControl -->
+            <div class="fuse-mat-dense fuse-mat-rounded min-w-full sm:min-w-30 my-auto mx-2">
+                <mat-label class="ml-auto">وضع الامتحان:</mat-label>
+                <mat-slide-toggle [(ngModel)]="setScore" [color]="'primary'">
+                    {{ setScore === true ? 'مفعل' : 'غير مفعل' }}
+                </mat-slide-toggle>
+            </div>
+
+            <!-- Compose button -->
+            <button class="mx-2 min-w-full sm:min-w-30 my-4 sm:my-0" mat-stroked-button (click)="generateXLSX()">
+                <mat-icon class="icon-size-5 ml-1" [svgIcon]="'heroicons_outline:share'"></mat-icon>
+                <span class="mr-2">تصدير</span>
+            </button>
+
+            <!-- Compose button -->
+            <button class="mx-2 min-w-full sm:min-w-30" mat-stroked-button (click)="openComposeDialog()">
+                <mat-icon class="icon-size-5 ml-1" [svgIcon]="'heroicons_outline:filter'"></mat-icon>
+                <span class="mr-2">تصفية</span>
+            </button>
+            <!-- searchSelectControl -->
+            <mat-form-field class="fuse-mat-dense fuse-mat-rounded min-w-full sm:min-w-30 my-auto mx-2">
+                <mat-label class="ml-auto">البحث بواسطة:</mat-label>
+                <mat-select [formControl]="searchSelectControl">
+                    <mat-option [value]="'nationalID'">الرقم القومي</mat-option>
+                    <mat-option [value]="'name'">الاسم</mat-option>
+                    <mat-option [value]="'phoneNumber'">رقم الهاتف</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <!-- Search -->
+            <mat-form-field class="fuse-mat-dense fuse-mat-rounded min-w-full sm:min-w-60 my-auto mx-2"
+                [subscriptSizing]="'dynamic'">
+                <mat-icon class="icon-size-5 ml-1 mr-0" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                <input matInput [formControl]="searchInputControl" [autocomplete]="'off'" [placeholder]="'البحث'" />
+            </mat-form-field>
+
+            <!-- Add Student button -->
+            <button class="mr-0 sm:mr-4 px-10 mt-4 sm:mt-0 min-w-full sm:min-w-40" mat-flat-button [color]="'primary'"
+                (click)="createStudent()">
+                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                <span class="mr-2 ml-1">إضافة</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden">
+        <!-- Students list -->
+        <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden sm:overflow-y-auto">
+            <ng-container *ngIf="students; else noStudents">
+                <div class="grid">
+                    <!-- Header -->
+                    <div class="inventory-grid z-10 sticky top-0 grid gap-4 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-9"
+                        matSort matSortDisableClear>
+                        <div>الرقم القومي</div>
+                        <div>الاسم</div>
+                        <div class="hidden lg:block">رقم الهاتف</div>
+                        <div class="hidden lg:block">تاريخ الميلاد</div>
+                        <div class="hidden md:block">النوع</div>
+                        <div class="hidden md:block">العام</div>
+                        <div class="hidden md:block">المستوى</div>
+                        <div class="hidden lg:block" *ngIf="setScore">الدرجة</div>
+                        <div class="hidden lg:block" *ngIf="!setScore">الكتاب</div>
+                        <div class="hidden lg:block" *ngIf="!setScore">الحالة</div>
+                        <div>الإجراء</div>
+                    </div>
+                    <!-- Rows -->
+                    <ng-container *ngIf="students">
+                        <ng-container *ngFor="let student of students; trackBy: trackByFn">
+                            <div class="inventory-grid grid items-center gap-4 py-3 px-6 md:px-8 border-b">
+                                <!-- nationalID -->
+                                <div class="truncate">
+                                    {{ student.nationalID }}
+                                </div>
+
+                                <!-- name -->
+                                <div class="truncate">
+                                    {{ student.name }}
+                                </div>
+
+                                <!-- phoneNumber -->
+                                <div class="hidden md:block">
+                                    {{ student.phoneNumber }}
+                                </div>
+
+                                <!-- dateOfBirth -->
+                                <div class="hidden lg:block">
+                                    {{ student.dateOfBirth | date : 'yyyy-MM-dd' }}
+                                </div>
+
+                                <!-- gender -->
+                                <div class="hidden md:block">
+                                    {{ student.gender == 'male' ? 'ذكر' : 'أنثى' }}
+                                </div>
+
+                                <!-- year -->
+                                <div class="hidden md:block">
+                                    {{ student?.subscriptions[student?.subscriptions?.length - 1]?.year }}
+                                </div>
+
+                                <!-- level -->
+                                <div class="hidden md:block">
+                                    {{ student?.subscriptions[student?.subscriptions?.length - 1]?.level }}
+                                </div>
+
+                                <!-- isReceived -->
+                                <div class="hidden lg:block" *ngIf="!setScore">
+                                    <span
+                                        class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide uppercase"
+                                        [ngClass]="{
+                      'bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-50': student.isReceived === false,
+                      'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50': student.isReceived === true
+                    }">
+                                        <span class="leading-relaxed whitespace-nowrap">{{
+                                            student.isReceived ? 'تم التسليم' : 'لم يستلم'
+                                            }}</span>
+                                    </span>
+                                </div>
+
+                                <!-- Status -->
+                                <div class="hidden lg:block" *ngIf="!setScore">
+                                    <span
+                                        class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide uppercase"
+                                        [ngClass]="{
+                      'bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-50': student.status === false,
+                      'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50': student.status === true
+                    }">
+                                        <span class="leading-relaxed whitespace-nowrap">{{
+                                            student.status ? 'تمت مراجعته' : 'لم يتم مراجعته'
+                                            }}</span>
+                                    </span>
+                                </div>
+
+                                <!-- year -->
+                                <div class="hidden md:block md:flex flex-auto" *ngIf="setScore">
+                                    <input matInput class="border w-10 p-1 rounded-md" #score
+                                        [ngModel]="student?.subscriptions[student?.subscriptions?.length - 1]?.score" />
+                                    <button mat-icon-button (click)="addScore(student['_id'], score.value)">
+                                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_outline:save'"></mat-icon>
+                                    </button>
+                                </div>
+
+
+                                <!-- Action Buttons -->
+                                <div>
+                                    <button mat-icon-button [matMenuTriggerFor]="budgetMenu">
+                                        <mat-icon class="icon-size-5"
+                                            [svgIcon]="'heroicons_solid:dots-horizontal'"></mat-icon>
+                                    </button>
+                                    <mat-menu #budgetMenu="matMenu">
+                                        <button mat-menu-item (click)="showStudent(student._id)">
+                                            <span class="flex items-center">
+                                                <mat-icon class="icon-size-5 mr-3"
+                                                    [svgIcon]="'heroicons_solid:eye'"></mat-icon>
+                                                <span>عرض</span>
+                                            </span>
+                                        </button>
+                                        <button mat-menu-item (click)="updateStudent(student._id)">
+                                            <span class="flex items-center">
+                                                <mat-icon class="icon-size-5 mr-3"
+                                                    [svgIcon]="'heroicons_solid:pencil'"></mat-icon>
+                                                <span>تعديل</span>
+                                            </span>
+                                        </button>
+                                        <button mat-menu-item (click)="deleteStudent(student._id)">
+                                            <span class="flex items-center">
+                                                <mat-icon class="icon-size-5 mr-3 text-warn-400"
+                                                    [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                                                <span>حذف</span>
+                                            </span>
+                                        </button>
+                                    </mat-menu>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                </div>
+                <mat-paginator
+                    class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+                    [ngClass]="{ 'pointer-events-none': isLoading }" [length]="totalStudents" [pageIndex]="pageIndex"
+                    (page)="getPaginatorData($event)" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 100]"
+                    [showFirstLastButtons]="true"></mat-paginator>
+            </ng-container>
+            <ng-template #noStudents>
+                <div class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">لا يوجد طلاب!</div>
+            </ng-template>
+        </div>
+    </div>
+</div>

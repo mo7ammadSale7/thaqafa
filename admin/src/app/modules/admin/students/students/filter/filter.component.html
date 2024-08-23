@@ -1,0 +1,93 @@
+<div class="flex flex-col max-w-240 min-w-72 md:min-w-160 max-h-screen -m-6 bg-gray-50 dark:bg-gray-900">
+  <!-- Header -->
+  <div class="flex flex-0 items-center justify-between h-16 pl-3 sm:pl-5 pr-6 sm:pr-8 bg-primary text-on-primary">
+    <div class="text-lg font-medium">تصفية</div>
+    <button mat-icon-button (click)="saveAndClose()" [tabIndex]="-1">
+      <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+    </button>
+  </div>
+
+  <!-- Filter form -->
+  <form class="flex flex-col flex-auto p-6 sm:p-8 overflow-y-auto" [formGroup]="filterForm">
+    <div class="grid sm:grid-cols-3 gap-3 w-full my-4">
+      <div class="sm:col-span-3">تصفية حسب النوع:</div>
+      <mat-radio-group
+        class="invisible absolute w-0 h-0 pointer-events-none"
+        [formControlName]="'gender'"
+        #genderRadioGroup="matRadioGroup"
+      >
+        <ng-container *ngFor="let item of genderList; trackBy: trackByFn">
+          <mat-radio-button [value]="item.value"> {{ item.label }}</mat-radio-button>
+        </ng-container>
+      </mat-radio-group>
+      <ng-container *ngFor="let item of genderList; trackBy: trackByFn">
+        <div
+          class="relative flex flex-col items-start justify-start p-4 rounded-md shadow cursor-pointer bg-card"
+          [ngClass]="{ 'ring ring-inset ring-primary': genderRadioGroup.value === item.value }"
+          (click)="genderRadioGroup.value = item.value; setGender(item.value)"
+        >
+          <ng-container *ngIf="genderRadioGroup.value === item.value">
+            <mat-icon
+              class="absolute top-0 left-0 mt-3 ml-3 icon-size-7 text-primary"
+              [svgIcon]="'heroicons_solid:check-circle'"
+            ></mat-icon>
+          </ng-container>
+          <div class="font-semibold">{{ item.label }}</div>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="flex flex-col items-center sm:flex-row flex-auto">
+      <!-- year -->
+      <mat-form-field class="w-full ml-2">
+        <mat-label class="ml-auto">تصفية حسب العام:</mat-label>
+        <mat-select [formControlName]="'year'">
+          <mat-option *ngFor="let year of years" [value]="year">{{ year ? year : 'الكل' }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- level -->
+      <mat-form-field class="w-full">
+        <mat-label class="ml-auto">تصفية حسب المستوى:</mat-label>
+        <mat-select [formControlName]="'level'">
+          <mat-option *ngFor="let level of levels" [value]="level.id">{{ level.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="flex flex-col items-center sm:flex-row flex-auto">
+      <!-- year -->
+      <mat-form-field class="w-full ml-2">
+        <mat-label class="ml-auto">تصفية حسب الكتاب:</mat-label>
+        <mat-select [formControlName]="'isReceived'">
+          <mat-option [value]="''">الكل</mat-option>
+          <mat-option [value]="true">تم التسليم</mat-option>
+          <mat-option [value]="false">لم يتم التسليم</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- level -->
+      <mat-form-field class="w-full">
+        <mat-label class="ml-auto">تصفية حسب الحالة:</mat-label>
+        <mat-select [formControlName]="'status'">
+          <mat-option [value]="''">الكل</mat-option>
+          <mat-option [value]="true">تمت مراجعته</mat-option>
+          <mat-option [value]="false">لم تتم مراجعته</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex flex-row items-center justify-between mt-4 sm:mt-6">
+      <div class="ml-auto sm:ml-0">
+        <button mat-stroked-button (click)="discard()">ألغاء</button>
+
+        <!-- Reset -->
+        <button class="mr-2" mat-flat-button [color]="'accent'" (click)="reset()">إعادة ضبط</button>
+      </div>
+
+      <!-- Send -->
+      <button class="" mat-flat-button [color]="'primary'" (click)="send()">تصفية</button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,99 @@
+<!-- Github issues summary -->
+<div
+  *ngIf="currentYear"
+  class="sm:col-span-2 md:col-span-4 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden"
+>
+  <div class="flex flex-col sm:flex-row items-start justify-between">
+    <div class="text-lg font-medium tracking-tight leading-6 truncate">مسابقة الثقافة الإسلامية</div>
+    <div class="mt-3 sm:mt-0 sm:mr-2">
+      <mat-button-toggle-group [value]="currentYear" #yearSelector="matButtonToggleGroup">
+        <mat-button-toggle *ngFor="let year of this.data" [value]="year['_id']">{{ year['_id'] }}</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+  </div>
+  <div class="grid grid-cols-1 lg:grid-cols-2 grid-flow-row gap-6 w-full mt-8 sm:mt-4">
+    <div class="flex flex-col flex-auto">
+      <div class="font-medium text-secondary">
+        {{ 'إجمالي العام ' + yearTotal[yearSelector.value ? yearSelector.value : currentYear] }}
+      </div>
+
+      <div class="flex flex-col flex-auto" *ngIf="data">
+        <apx-chart
+          class="flex-auto w-full h-80"
+          [chart]="studentYearCount?.chart"
+          [colors]="studentYearCount?.colors"
+          [dataLabels]="studentYearCount?.dataLabels"
+          [grid]="studentYearCount?.grid"
+          [labels]="studentYearCount?.labels"
+          [legend]="studentYearCount?.legend"
+          [plotOptions]="studentYearCount?.plotOptions"
+          [series]="studentYearCount?.series[yearSelector?.value ? yearSelector.value : currentYear]"
+          [states]="studentYearCount?.states"
+          [stroke]="studentYearCount?.stroke"
+          [tooltip]="studentYearCount?.tooltip"
+          [xaxis]="studentYearCount?.xaxis"
+          [yaxis]="studentYearCount?.yaxis"
+        ></apx-chart>
+      </div>
+    </div>
+    <!-- Overview -->
+    <div class="flex flex-col">
+      <div class="flex-auto grid grid-cols-4 gap-4 mt-6">
+        <!-- New issues -->
+        <div
+          class="col-span-2 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-indigo-50 text-indigo-800 dark:bg-white dark:bg-opacity-5 dark:text-indigo-400"
+        >
+          <div class="text-5xl sm:text-7xl font-semibold leading-none tracking-tight">
+            {{ series[yearSelector.value ? yearSelector.value : currentYear][0]['data'][0] }}
+          </div>
+          <div class="mt-1 text-sm sm:text-lg font-medium">المستوى الأول</div>
+        </div>
+        <!-- Closed -->
+        <div
+          class="col-span-2 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-green-50 text-green-800 dark:bg-white dark:bg-opacity-5 dark:text-green-500"
+        >
+          <div class="text-5xl sm:text-7xl font-semibold leading-none tracking-tight">
+            {{ series[yearSelector.value ? yearSelector.value : currentYear][0]['data'][1] }}
+          </div>
+          <div class="mt-1 text-sm sm:text-lg font-medium">المستوى الثاني</div>
+        </div>
+        <!-- Fixed -->
+        <div
+          class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-gray-100 text-secondary dark:bg-white dark:bg-opacity-5"
+        >
+          <div class="text-5xl font-semibold leading-none tracking-tight">
+            {{ series[yearSelector.value ? yearSelector.value : currentYear][0]['data'][2] }}
+          </div>
+          <div class="mt-1 text-sm font-medium text-center">المستوى الثالث</div>
+        </div>
+        <!-- Won't fix -->
+        <div
+          class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-gray-100 text-secondary dark:bg-white dark:bg-opacity-5"
+        >
+          <div class="text-5xl font-semibold leading-none tracking-tight">
+            {{ series[yearSelector.value ? yearSelector.value : currentYear][0]['data'][3] }}
+          </div>
+          <div class="mt-1 text-sm font-medium text-center">المستوى الرابع</div>
+        </div>
+        <!-- Re-opened -->
+        <div
+          class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-gray-100 text-secondary dark:bg-white dark:bg-opacity-5"
+        >
+          <div class="text-5xl font-semibold leading-none tracking-tight">
+            {{ series[yearSelector.value ? yearSelector.value : currentYear][0]['data'][4] }}
+          </div>
+          <div class="mt-1 text-sm font-medium text-center">المستوى الخامس</div>
+        </div>
+        <!-- Needs triage -->
+        <div
+          class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-gray-100 text-secondary dark:bg-white dark:bg-opacity-5"
+        >
+          <div class="text-5xl font-semibold leading-none tracking-tight">
+            {{ series[yearSelector.value ? yearSelector.value : currentYear][0]['data'][5] }}
+          </div>
+          <div class="mt-1 text-sm font-medium text-center">المستوى السادس</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

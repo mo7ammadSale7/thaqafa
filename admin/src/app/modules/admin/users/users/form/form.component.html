@@ -1,0 +1,128 @@
+<div class="flex flex-col flex-auto min-w-0">
+  <!-- Header -->
+  <div
+    class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent"
+  >
+    <!-- Loader -->
+    <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+      <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+    </div>
+    <div class="flex-1 min-w-0">
+      <!-- Breadcrumbs -->
+      <div class="flex flex-wrap items-center font-medium">
+        <a class="whitespace-nowrap text-primary-500">المستخدمين</a>
+      </div>
+      <!-- Title -->
+      <div class="mt-2">
+        <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+          {{ userId ? 'تعديل المستخدم' : 'إضافة مستخدم' }}
+        </h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex-auto p-6 sm:p-10">
+    <!-- blog form -->
+    <form [formGroup]="userForm">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full -m-4">
+        <div class="lg:col-span-2 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl">
+          <div class="my-8">
+            <div class="flex">
+              <div class="flex flex-col w-full">
+                <div class="flex flex-col sm:flex-row">
+                  <div class="flex flex-col w-full">
+                    <!-- photo -->
+                    <mat-label>الصورة الشخصية</mat-label>
+                    <div class="flex flex-col items-center mb-8">
+                      <div
+                        class="relative flex items-center justify-center w-32 h-32 rounded-full overflow-hidden ring-4 ring-bg-card"
+                      >
+                        <div class="absolute inset-0 bg-black bg-opacity-50 z-10"></div>
+                        <div class="absolute inset-0 flex items-center justify-center z-20">
+                          <div>
+                            <input
+                              id="avatar-file-input"
+                              class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                              type="file"
+                              [multiple]="false"
+                              [accept]="'image/jpeg, image/png'"
+                              (change)="uploadAvatar(avatarFileInput.files)"
+                              #avatarFileInput
+                            />
+                            <label
+                              class="flex items-center justify-center w-10 h-10 rounded-full cursor-pointer hover:bg-hover"
+                              for="avatar-file-input"
+                              matRipple
+                            >
+                              <mat-icon class="text-white" [svgIcon]="'heroicons_outline:camera'"></mat-icon>
+                            </label>
+                          </div>
+                          <div>
+                            <button mat-icon-button (click)="removeAvatar()">
+                              <mat-icon class="text-white" [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+                            </button>
+                          </div>
+                        </div>
+                        <!-- Image/Letter -->
+                        <img class="object-cover w-full h-full" *ngIf="image" [src]="image" />
+                        <div
+                          class="flex items-center justify-center w-full h-full rounded overflow-hidden uppercase text-8xl font-bold leading-none bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                          *ngIf="!image"
+                        >
+                          {{ userForm.get('name')?.value?.charAt(0) }}
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Name -->
+                    <mat-form-field class="w-full">
+                      <mat-label>الاسم</mat-label>
+                      <input matInput [formControlName]="'name'" />
+                    </mat-form-field>
+
+                    <!-- Email -->
+                    <mat-form-field class="w-full">
+                      <mat-label>البريد الإلكتروني</mat-label>
+                      <input matInput [formControlName]="'email'" type="email" />
+                    </mat-form-field>
+
+                    <!-- Role -->
+                    <mat-form-field class="w-full">
+                      <mat-label class="ml-auto">الصلاحية</mat-label>
+                      <mat-select [formControlName]="'role'">
+                        <mat-option [value]="'user'">مستخدم</mat-option>
+                        <mat-option [value]="'admin'">مدير</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <!-- Password -->
+                    <mat-form-field class="w-full" *ngIf="!userId">
+                      <mat-label>كلمة المرور</mat-label>
+                      <input matInput [formControlName]="'password'" type="password" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col flex-auto p-6 bg-card rounded-2xl shadow">
+          <div class="my-8">
+            <div class="flex flex-col my-8">
+              <span class="font-semibold mb-2">حالة المستخدم</span>
+              <mat-slide-toggle [formControlName]="'status'" [color]="'primary'">
+                {{ userForm.get('status').value === true ? 'نشط' : 'غير نشط' }}
+              </mat-slide-toggle>
+            </div>
+            <div class="flex items-center justify-between w-full border-t px-8 py-4">
+              <button class="-mr-4" mat-button [color]="'warn'" (click)="onBack()">إلغاء</button>
+              <div class="flex items-center">
+                <button mat-flat-button [color]="'primary'" (click)="submitForm()">حفظ</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

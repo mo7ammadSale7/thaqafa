@@ -1,0 +1,175 @@
+<div class="flex flex-col flex-auto min-w-0">
+  <!-- Header -->
+  <div
+    class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent"
+  >
+    <!-- Loader -->
+    <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+      <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+    </div>
+    <div class="flex-1 min-w-0">
+      <!-- Breadcrumbs -->
+      <div class="flex flex-wrap items-center font-medium">
+        <a class="whitespace-nowrap text-primary-500">طلاب مسابقة الثقافة الإسلامية</a>
+      </div>
+      <!-- Title -->
+      <div class="mt-2">
+        <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+          {{ student.name }}
+        </h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex-auto p-6 sm:p-10">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full -m-4">
+      <div class="lg:col-span-2 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl">
+        <div class="my-8">
+          <div class="flex">
+            <div class="flex flex-col w-full">
+              <div class="flex flex-col sm:flex-row">
+                <div class="flex flex-col flex-auto w-full">
+                  <div class="flex flex-col sm:flex-row flex-auto w-full">
+                    <!-- nationalID -->
+                    <div class="w-full ml-2">
+                      <a class="whitespace-nowrap text-primary-500">الرقم القومي</a>
+                      <h3 class="text-lg md:text-lg font-bold tracking-tight leading-7 sm:leading-10">
+                        {{ student.nationalID }}
+                      </h3>
+                    </div>
+
+                    <!-- dateOfBirth -->
+                    <div class="w-full ml-2">
+                      <a class="whitespace-nowrap text-primary-500">تاريخ الميلاد</a>
+                      <h3 class="text-lg md:text-lg font-bold tracking-tight leading-7 sm:leading-10">
+                        {{ student.dateOfBirth | date : 'yyyy-MM-dd' }}
+                      </h3>
+                    </div>
+
+                    <!-- Gender -->
+                    <div class="w-full">
+                      <a class="whitespace-nowrap text-primary-500">النوع</a>
+                      <h3 class="text-lg md:text-lg font-bold tracking-tight leading-7 sm:leading-10">
+                        {{ student.gender == 'male' ? 'ذكر' : 'أنثى' }}
+                      </h3>
+                    </div>
+                  </div>
+
+                  <div class="flex flex-col sm:flex-row border-t mt-8 pt-8 flex-auto w-full">
+                    <!-- address -->
+                    <div class="w-full">
+                      <a class="whitespace-nowrap text-primary-500">العنوان</a>
+                      <h3 class="text-lg md:text-lg font-bold tracking-tight leading-7 sm:leading-10">
+                        {{ student.address }}
+                      </h3>
+                    </div>
+
+                    <!-- phoneNumber -->
+                    <div class="w-full">
+                      <a class="whitespace-nowrap text-primary-500">رقم الهاتف</a>
+                      <h3 class="text-lg md:text-lg font-bold tracking-tight leading-7 sm:leading-10">
+                        {{ student.phoneNumber }}
+                      </h3>
+                    </div>
+                  </div>
+                  <div class="mt-8 border-t pt-4">
+                    <div
+                      class="w-full border rounded bg-gray-50 dark:bg-gray-900 dark:bg-opacity-9 p-4 mb-4"
+                      *ngFor="let subscription of student.subscriptions"
+                    >
+                      <div>
+                        <div class="flex flex-col items-center justify-center sm:flex-row flex-auto">
+                          <!-- year -->
+                          <div class="w-full ml-2">
+                            <a class="whitespace-nowrap text-primary-500">العام</a>
+                            <h3 class="text-lg md:text-lg font-bold tracking-tight leading-7 sm:leading-10">
+                              {{ subscription.year }}
+                            </h3>
+                          </div>
+
+                          <!-- level -->
+                          <div class="w-full ml-2">
+                            <a class="whitespace-nowrap text-primary-500">المستوى</a>
+                            <h3 class="text-lg md:text-lg font-bold tracking-tight leading-7 sm:leading-10">
+                              {{ subscription.level }}
+                            </h3>
+                          </div>
+
+                          <!-- score -->
+                          <div class="w-full ml-2">
+                            <a class="whitespace-nowrap text-primary-500">النتيجة</a>
+                            <h3 class="text-lg md:text-lg font-bold tracking-tight leading-7 sm:leading-10">
+                              {{ subscription.score ? subscription.score : 'لا توجد' }}
+                            </h3>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-col flex-auto p-6 bg-card rounded-2xl shadow">
+        <div class="my-8">
+          <!-- note -->
+          <div class="flex flex-col border-b w-full">
+            <div class="w-full">
+              <a class="whitespace-nowrap text-primary-500">ملاحظات</a>
+              <p class="text-lg md:text-lg font-bold tracking-tight leading-7 sm:leading-10">
+                {{ student.note ? student.note : 'لا توجد ملاحظات.' }}
+              </p>
+            </div>
+          </div>
+
+          <div class="w-full my-8">
+            <a class="whitespace-nowrap text-primary-500 ml-2">الكتاب</a>
+            <div
+              class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide uppercase"
+              [ngClass]="{
+                'bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-50': student.isReceived === false,
+                'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50': student.isReceived === true
+              }"
+            >
+              <span class="leading-relaxed whitespace-nowrap">{{
+                student.isReceived ? 'تم التسليم' : 'لم يستلم'
+              }}</span>
+            </div>
+          </div>
+
+          <div class="w-full my-8">
+            <a class="whitespace-nowrap text-primary-500 ml-2">حالة الطالب</a>
+            <div
+              class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide uppercase"
+              [ngClass]="{
+                'bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-50': student.status === false,
+                'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50': student.status === true
+              }"
+            >
+              <span class="leading-relaxed whitespace-nowrap">{{
+                student.status ? 'تمت مراجعته' : 'لم يتم مراجعته'
+              }}</span>
+            </div>
+          </div>
+          <div class="w-full border-t py-4">
+            <div class="mb-4">
+              <a class="whitespace-nowrap text-primary-500">أضيف بواسطة:</a>
+              <p>{{ '(' + student?.createdBy?.name + ') ' + student?.createdBy?.email }}</p>
+              <p>{{ student?.createdAt | date : 'yyyy-MM-dd - hh:mm:ss' }}</p>
+            </div>
+            <div>
+              <a class="whitespace-nowrap text-primary-500">أخر تحديث بواسطة:</a>
+              <p>{{ '(' + student?.updatedBy?.name + ') ' + student?.updatedBy?.email }}</p>
+              <p>{{ student?.updatedAt | date : 'yyyy-MM-dd - hh:mm:ss' }}</p>
+            </div>
+          </div>
+          <div class="flex items-center justify-center w-full border-t px-8 py-4">
+            <button mat-flat-button class="w-full" [color]="'primary'" (click)="onBack()">رجوع</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
